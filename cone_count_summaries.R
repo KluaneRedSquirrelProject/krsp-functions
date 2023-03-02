@@ -17,7 +17,7 @@ selected_grids <- c("AG", "CH", "JO", "KL", "LL", "SU")
 
 cone_counts<-tbl(con, "cones") %>%
   filter(Grid %in% selected_grids, Year>=1988) %>%
-  collect() %>%
+  collect()  %>%
   mutate(Year = as.numeric(Year), 
          LocX = as.numeric(LocX), 
          LocY = as.numeric(LocY), 
@@ -33,7 +33,9 @@ cone_counts<-tbl(con, "cones") %>%
 ##################################
 # Means calculated per Grid Year #
 ##################################
-cones_grids_years <- group_by(cone_counts, Year, Grid) %>% 
+detach(package:plyr)
+cones_grids_years <- cone_counts %>% 
+  group_by(Year, Grid) %>% 
   summarise(num_trees = sum(!is.na(NumNew)),
             cone_counts = mean(NumNew, na.rm = TRUE),
             cone_index = mean(cone_index, na.rm = TRUE)) %>% 
@@ -77,7 +79,13 @@ cones_grids_years<-cones_grids_years %>%
           mast = ifelse(Grid=="SU"&Year==2019, "y", mast),
           mast = ifelse(Grid=="CH"&Year==2019, "y", mast),
           mast = ifelse(Grid=="JO"&Year==2019, "y", mast),
-          mast = ifelse(Grid=="AG"&Year==2019, "y", mast)) %>% 
+          mast = ifelse(Grid=="AG"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="KL"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="LL"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="SU"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="CH"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="JO"&Year==2022, "y", mast),
+          mast = ifelse(Grid=="AG"&Year==2022, "y", mast)) %>% 
   mutate (Exp = "c") %>% 
   mutate (Exp = ifelse(Grid=="AG"&Year>2004&Year<2018, "f", Exp),
           Exp = ifelse(Grid=="JO"&Year>2006&Year<2013, "f", Exp),
