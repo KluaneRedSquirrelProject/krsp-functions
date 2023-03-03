@@ -19,10 +19,6 @@ cone_counts<-tbl(con, "cones") %>%
   filter(Grid %in% selected_grids, Year>=1988) %>%
   collect()  %>%
   mutate(Year = as.numeric(Year), 
-         LocX = as.numeric(LocX), 
-         LocY = as.numeric(LocY), 
-         DBH = as.numeric(DBH), 
-         Per = as.numeric(Per), 
          NumNew = as.numeric(NumNew),
          cone_index = log(NumNew + 1),
          total_cones = 1.11568 * exp(0.1681 + 1.1891 * log(NumNew + 0.01)) # according to Krebs et al. 2012
@@ -118,7 +114,7 @@ yearly_cone_temp<-yearly_cones %>%
 
 yearly_cones<-left_join(yearly_cones, yearly_cone_temp, by=c("Year" = "Year_tp1")) %>% 
   select(Year, num_trees, cone_counts, cone_index_t, cone_index_tm1, total_cones) %>% 
-  mutate(mast=ifelse(Year %in% c(1993, 1998, 2005, 2010, 2014, 2019), "y", "n"))
+  mutate(mast=ifelse(Year %in% c(1993, 1998, 2005, 2010, 2014, 2019, 2022), "y", "n"))
 
 
 ############################################
@@ -128,7 +124,8 @@ yearly_cones<-left_join(yearly_cones, yearly_cone_temp, by=c("Year" = "Year_tp1"
 cone_counts_klsu<-tbl(con, "cones") %>%
   filter(Grid %in% c("SU", "KL"), Year>=1988, !is.na(NumNew)) %>%
   collect() %>%
-  mutate(Year = as.numeric(Year), LocX = as.numeric(LocX), LocY = as.numeric(LocY), DBH = as.numeric(DBH), Per = as.numeric(Per), NumNew = as.numeric(NumNew)) %>% 
+  mutate(Year = as.numeric(Year),
+         NumNew = as.numeric(NumNew)) %>% 
   mutate(total_cones = 1.11568 * exp(0.1681 + 1.1891 * log(NumNew + 0.01)))
 
 yearly_cones_klsu <- group_by(cone_counts_klsu, Year) %>% 
@@ -146,7 +143,7 @@ yearly_klsu_cone_temp<-yearly_cones_klsu %>%
 
 yearly_cones_klsu<-left_join(yearly_cones_klsu, yearly_klsu_cone_temp, by=c("Year" = "Year_tp1")) %>% 
   select(Year, num_trees, cone_counts, cone_index_t, cone_index_tm1, total_cones)%>% 
-  mutate(mast=ifelse(Year %in% c(1993, 1998, 2005, 2010, 2014, 2019), "y", "n"))
+  mutate(mast=ifelse(Year %in% c(1993, 1998, 2005, 2010, 2014, 2019, 2022), "y", "n"))
 
 
 
