@@ -29,7 +29,7 @@ cone_counts<-tbl(con, "cones") %>%
 ##################################
 # Means calculated per Grid Year #
 ##################################
-detach(package:plyr)
+#detach(package:plyr)
 cones_grids_years <- cone_counts %>% 
   group_by(Year, Grid) %>% 
   summarise(num_trees = sum(!is.na(NumNew)),
