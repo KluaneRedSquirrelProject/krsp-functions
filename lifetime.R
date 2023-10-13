@@ -9,7 +9,7 @@
 # library (devtools)
 # devtools::install_github("KluaneRedSquirrelProject/krsp")
 
-library (plyr)  #Causes conflicts with dplyr - needs to load first
+#library (plyr)  #Causes conflicts with dplyr - needs to load first
 library (krsp)
 library (dplyr)
 library (lubridate)
@@ -296,6 +296,7 @@ litter <- litter %>%
   mutate (bucket2 = as.numeric(bucket2))
 
 # Standardize litter table within grid-years
+library (plyr)
 litter<-ddply(litter, c("yrf", "grid"), transform, std_Growt = scale(mean_growth))
 litter<-ddply(litter, c("yrf", "grid"), transform, std_Julian = scale(Julian))
 litter<-ddply(litter, c("yrf", "grid"), transform, std_LS = scale(ls))
@@ -305,6 +306,8 @@ with(litter, tapply(std_Julian, list(yrf, grid), mean, na.rm=T))
 with(litter, tapply(std_Julian, list(yrf, grid), sd, na.rm=T))
 with(litter, tapply(w_litter_fit, list(yrf, grid), mean, na.rm=T))
 with(litter, tapply(w_litter_fit, list(yrf, grid), var, na.rm=T))
+
+detach(package:plyr)
 
 #Generate lifetime data
 lifetime<-tbl(con, "flastall2") %>% 
@@ -401,11 +404,14 @@ lifetime<-lifetime %>%
 lifetime<-lifetime %>% 
   mutate(LRS = ifelse(longevity > 199, LRS, NA_real_))
 
+library (plyr)
 lifetime<-ddply(lifetime, c("byear", "grid"), transform, std_bdate = scale(bdate))
 lifetime<-ddply(lifetime, c("byear", "grid"), transform, std_growth = scale(growth))
 lifetime<-ddply(lifetime, c("byear", "grid"), transform, std_birth_litter_size = scale(birth_litter_size))
 lifetime<-ddply(lifetime, c("byear", "grid"), transform, w_dam_lrs = dam_lrs/mean(dam_lrs, na.rm=T))
 lifetime<-ddply(lifetime, c("byear", "grid"), transform, w_sire_lrs = sire_lrs/mean(sire_lrs, na.rm=T))
+
+detach(package:plyr)
 
 #Link some adult traits
 first_litter_means<-litter %>% 
